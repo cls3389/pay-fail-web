@@ -190,6 +190,30 @@ def get_stats():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/health')
+def health_check():
+    """健康检查端点 - 用于Docker健康检查和监控"""
+    try:
+        # 检查应用基本功能
+        from config import Config
+        from excel_processor import excel_service
+        
+        # 简单的状态检查
+        status = {
+            'status': 'healthy',
+            'timestamp': datetime.now().isoformat(),
+            'service': 'excel-processor-web',
+            'version': '1.0.0'
+        }
+        
+        return jsonify(status)
+    except Exception as e:
+        return jsonify({
+            'status': 'unhealthy',
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        }), 500
+
 @app.route('/admin/cleanup', methods=['POST'])
 def admin_cleanup():
     """手动清理文件接口"""

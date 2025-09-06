@@ -125,9 +125,10 @@ http://localhost:4009
 
 项目已配置GitHub Actions自动化流程：
 
-- **CI/CD**: 自动测试Python 3.9和3.11
-- **Docker Build**: 自动构建Docker镜像并发布到GitHub Container Registry
-- **Multi-platform**: 支持AMD64和ARM64架构
+- **Docker CI**: 语法检查、Docker构建测试、容器启动验证
+- **Docker Build**: 自动构建Docker镜像并发布到GitHub Container Registry  
+- **Multi-platform**: 支持AMD64和ARM64架构 (linux/amd64, linux/arm64)
+- **Artifact Attestation**: 镜像构建溯源和安全验证
 
 ## API接口
 
