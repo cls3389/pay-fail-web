@@ -16,9 +16,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     
-    services:
-      # 如果需要测试数据库或其他服务，可以在这里添加
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
