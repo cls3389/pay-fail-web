@@ -8,6 +8,7 @@
 import os
 import json
 import traceback
+import logging
 from datetime import datetime
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, flash
@@ -17,6 +18,7 @@ from werkzeug.exceptions import RequestEntityTooLarge
 
 from config import Config
 from excel_processor import excel_service
+from file_cleaner import start_file_cleaner, stop_file_cleaner, cleanup_files_now, get_file_stats
 
 def create_app():
     """创建Flask应用"""
@@ -28,6 +30,19 @@ def create_app():
     
     # 初始化目录
     Config.init_app()
+    
+    # 配置日志
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler('logs/app.log'),
+            logging.StreamHandler()
+        ]
+    )
+    
+    # 启动文件清理服务
+    start_file_cleaner()
     
     return app
 
@@ -103,6 +118,12 @@ def upload_file():
         except Exception:
             pass  # 忽略删除临时文件的错误
         
+        # 处理完成后触发文件清理
+        try:
+            cleanup_files_now()
+        except Exception as e:
+            print(f"⚠️ 文件清理失败: {e}")
+        
         return jsonify(result)
         
     except RequestEntityTooLarge:
@@ -153,16 +174,38 @@ def get_stats():
         upload_files = list(upload_dir.glob('*')) if upload_dir.exists() else []
         output_files = list(output_dir.glob('*')) if output_dir.exists() else []
         
+        # 添加文件清理统计
+        file_stats = get_file_stats()
+        
         return jsonify({
             'upload_folder_size': len(upload_files),
             'output_folder_size': len(output_files),
             'supported_formats': list(app.config['ALLOWED_EXTENSIONS']),
             'max_file_size_mb': app.config['MAX_CONTENT_LENGTH'] // (1024 * 1024),
             'required_columns': app.config['REQUIRED_COLUMNS'],
-            'optional_columns': app.config.get('OPTIONAL_COLUMNS', [])
+            'optional_columns': app.config.get('OPTIONAL_COLUMNS', []),
+            'file_cleanup_stats': file_stats,
+            'cleanup_retention_days': 1
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/admin/cleanup', methods=['POST'])
+def admin_cleanup():
+    """手动清理文件接口"""
+    try:
+        cleanup_files_now()
+        file_stats = get_file_stats()
+        return jsonify({
+            'success': True,
+            'message': '文件清理完成',
+            'file_stats': file_stats
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'清理失败: {str(e)}'
+        })
 
 @app.errorhandler(404)
 def not_found(error):
