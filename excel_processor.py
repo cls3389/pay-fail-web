@@ -450,7 +450,7 @@ class ExcelProcessorService:
         sheet_name = f"{current_time.month:02d}{current_time.day:02d}{current_time.hour:02d}{current_time.minute:02d}"
         
         # 生成输出文件名（不删除原文件）
-        base_name = "扣款失败信息处理结果"
+        base_name = "扣款失败信息处理"
         timestamp = current_time.strftime('%Y%m%d_%H%M%S')
         output_filename = f"{base_name}_{timestamp}.xlsx"
         output_path = os.path.join(output_dir, output_filename)
