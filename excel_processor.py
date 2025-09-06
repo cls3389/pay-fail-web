@@ -563,15 +563,24 @@ class ExcelProcessorService:
             for col in range(1, num_columns + 1):
                 cell = ws.cell(row=row, column=col)
                 
-                # 检查是否为直营中心标题行（通过合并单元格判断）
-                if col == 1 and cell.value and ws.cell(row=row, column=2).value is None and ws.cell(row=row, column=3).value is None:
+                # 检查是否为直营中心标题行（直接检查合并单元格）
+                is_center_title = False
+                if col == 1 and cell.value:
+                    # 检查是否在合并单元格中
+                    for merged_range in ws.merged_cells.ranges:
+                        if cell.coordinate in merged_range:
+                            is_center_title = True
+                            break
+                
+                if is_center_title:
                     # 直营中心标题样式
                     print(f"      DEBUG: 检测到直营中心标题行 {row}: {cell.value}")
                     cell.font = 直营中心标题字体
                     cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
                     cell.fill = PatternFill(start_color='E6F3FF', end_color='E6F3FF', fill_type='solid')
+                    cell.border = 边框样式  # 添加边框
                     ws.row_dimensions[row].height = 25  # 浅蓝色背景，高度25
-                    print(f"      DEBUG: 设置行高为25px")
+                    print(f"      DEBUG: 设置行高为25px，添加边框")
                 elif any(keyword in str(cell.value or '') for keyword in ['所属团队', '所属业务经理', '客户姓名', '应还款金额']):
                     # 表头样式
                     cell.font = 标题字体
