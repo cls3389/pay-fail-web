@@ -150,6 +150,29 @@ curl -v http://localhost:4009/health
 
 ### 群晖NAS部署
 
+#### 方式1：Docker部署（推荐）
+```bash
+# SSH登录群晖NAS
+ssh admin@your-nas-ip
+
+# 确保Docker已安装并启动（套件中心）
+# 克隆项目
+git clone https://github.com/cls3389/koukuanshibai-web.git
+cd koukuanshibai-web
+
+# 一键Docker部署
+./dsm/docker-start.sh
+
+# 查看Docker状态  
+./dsm/docker-status.sh
+
+# 停止Docker服务
+./dsm/docker-stop.sh
+
+# 访问地址：http://your-nas-ip:4009
+```
+
+#### 方式2：Python直接部署
 ```bash
 # SSH登录群晖NAS
 ssh admin@your-nas-ip
@@ -159,7 +182,7 @@ ssh admin@your-nas-ip
 git clone https://github.com/cls3389/koukuanshibai-web.git
 cd koukuanshibai-web
 
-# 使用专用脚本启动
+# 使用Python脚本启动
 ./dsm/start.sh
 
 # 查看状态
