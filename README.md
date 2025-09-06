@@ -1,5 +1,9 @@
 # 扣款失败信息处理工具 - Web版本
 
+[![Version](https://img.shields.io/badge/version-v1.0.0-blue.svg)](https://github.com/cls3389/koukuanshibai-web/releases)
+[![Docker](https://img.shields.io/badge/docker-ghcr.io%2Fcls3389%2Fkoukuanshibai--web-blue.svg)](https://github.com/cls3389/koukuanshibai-web/pkgs/container/koukuanshibai-web)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 基于Flask的Web应用，支持在线处理Excel文件，自动分析扣款失败信息。
 
 ## ✨ 功能特性
@@ -137,6 +141,29 @@ docker images | grep koukuanshibai-web
 - **GitHub Issues**: [提交问题](https://github.com/cls3389/koukuanshibai-web/issues)
 - **健康检查**: http://localhost:4009/health
 - **API文档**: http://localhost:4009/api/stats
+
+## 📋 版本历史
+
+### v1.0.0 (2025-01-27) - 正式发布 🎉
+
+**新功能**
+- ✨ 基于Flask的Web应用
+- 📊 支持Excel文件在线处理
+- 🔍 智能分析扣款失败信息
+- 🐳 Docker容器化部署
+- 🚀 GitHub Actions CI/CD
+
+**技术特性**
+- Python 3.11 + Flask 2.3.3
+- Pandas + OpenPyXL数据处理
+- Gunicorn多进程并发
+- 轻量级Docker镜像（~200MB）
+- 内存占用仅80MB
+
+**部署方式**
+- Docker镜像：`ghcr.io/cls3389/koukuanshibai-web:latest`
+- 端口：4009
+- 健康检查：`/health`
 
 ## 📄 许可证
 
