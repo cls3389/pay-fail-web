@@ -30,22 +30,20 @@ jobs:
 
     - name: Run tests
       run: |
-        # 如果有测试文件，运行测试
-        if [ -f "test_*.py" ]; then
-          python -m pytest -v --tb=short
-        else
-          echo "No test files found"
-        fi
-        
         # 运行基本的应用导入测试
+        echo "Testing module imports..."
         python -c "import excel_web; print('✅ excel_web module imported successfully')"
         python -c "import excel_processor; print('✅ excel_processor module imported successfully')"
         python -c "import file_cleaner; print('✅ file_cleaner module imported successfully')"
+        
+        # 如果有测试文件，运行测试
+        if [ -f "test_*.py" ]; then
+          echo "Running pytest tests..."
+          python -m pytest -v --tb=short --disable-warnings
+        else
+          echo "No test files found, skipping pytest"
+        fi
 
-    - name: Skip lint check
-      run: |
-        echo "Skipping lint check to focus on build and test"
-        # 暂时跳过lint检查，专注于功能测试
 
   build-docker:
     runs-on: ubuntu-latest
