@@ -156,11 +156,15 @@ curl -v http://localhost:4009/health
 ssh admin@your-nas-ip
 
 # 确保Docker已安装并启动（套件中心）
-# 克隆项目
+
+# 首次部署：克隆项目
 git clone https://github.com/cls3389/koukuanshibai-web.git
 cd koukuanshibai-web
 
-# 一键Docker部署
+# 一键Docker部署（自动拉取最新代码）
+./dsm/docker-start.sh
+
+# 后续更新部署：直接运行（会自动git pull）
 ./dsm/docker-start.sh
 
 # 查看Docker状态  
