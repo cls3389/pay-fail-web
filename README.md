@@ -467,10 +467,19 @@ docker run -d \
 
 ```bash
 # 拉取镜像
-docker pull ghcr.io/your-username/koukuanshibai-web:latest
+docker pull ghcr.io/cls3389/koukuanshibai-web:latest
 
 # 运行
-docker run -d -p 4009:4009 ghcr.io/your-username/koukuanshibai-web:latest
+docker run -d -p 4009:4009 ghcr.io/cls3389/koukuanshibai-web:latest
+
+# 带数据卷运行（推荐）
+docker run -d \
+  --name excel-processor \
+  -p 4009:4009 \
+  -v ./uploads:/app/uploads \
+  -v ./output:/app/output \
+  -v ./logs:/app/logs \
+  ghcr.io/cls3389/koukuanshibai-web:latest
 ```
 
 ## 项目说明
@@ -567,5 +576,6 @@ A:
 
 ## 贡献
 
-欢迎提交Issues和Pull Requests！#   G i t H u b   A c t i o n s   T e s t   -   0 9 / 0 6 / 2 0 2 5   2 3 : 3 4 : 1 6  
+欢迎提交Issues和Pull Requests！#   G i t H u b   A c t i o n s   T e s t   -   0 9 / 0 6 / 2 0 2 5   2 3 : 3 4 : 1 6 
+ 
  
