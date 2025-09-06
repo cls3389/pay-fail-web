@@ -1,4 +1,4 @@
-name: CI
+name: Docker CI
 
 on:
   push:
@@ -7,41 +7,49 @@ on:
     branches: [ main, master ]
 
 jobs:
-  test:
+  # 基础语法检查 - 轻量级
+  lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.9, 3.11]
-
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.11
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: '3.11'
     
-    - name: Cache pip packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-    
-    - name: Install dependencies
+    - name: Install minimal dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install flake8 flask pandas openpyxl
     
-    - name: Create directories
+    - name: Lint with flake8
       run: |
-        mkdir -p uploads output logs
+        # 忽略长行和一些Flask特定的问题
+        flake8 . --count --max-line-length=120 --statistics --exclude=__pycache__ --ignore=E501,W503
     
-    - name: Test Flask app startup
+    - name: Check Python syntax
       run: |
-        python -c "from excel_web import app; print('Flask app loads successfully')"
+        python -m py_compile excel_web.py excel_processor.py config.py file_cleaner.py
+
+  # Docker构建测试 - 确保Dockerfile正常工作
+  docker-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
     
-    - name: Test Excel processor
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Test Docker build
       run: |
-        python -c "from excel_processor import excel_service; print('Excel processor loads successfully')"
+        docker build -t test-image .
+        
+    - name: Test container startup
+      run: |
+        # 启动容器并测试健康检查
+        docker run -d --name test-container -p 4009:4009 test-image
+        sleep 15
+        # 简单的健康检查
+        curl -f http://localhost:4009/health || exit 1
+        docker stop test-container

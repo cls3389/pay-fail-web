@@ -33,11 +33,3 @@ services:
 networks:
   excel-network:
     driver: bridge
-
-volumes:
-  uploads:
-    driver: local
-  output:
-    driver: local
-  logs:
-    driver: local
