@@ -13,42 +13,140 @@
 - 🧹 **自动清理**: 自动清理超过1天的处理文件，节省存储空间
 - ⚡ **高性能**: 优化的多进程架构，支持并发处理
 
+## 前置要求
+
+### 系统要求
+- **操作系统**: Windows 10/11、macOS、Linux、群晖NAS (DSM 7.0+)
+- **网络**: 能访问GitHub和Docker Hub的网络环境
+- **硬件**: 至少1GB内存，500MB存储空间
+
+### 软件要求（根据部署方式选择）
+
+#### Docker部署（推荐，适合所有用户）
+- **Docker**: 最新版本的Docker Desktop (Windows/Mac) 或 Docker Engine (Linux)
+- **获取方式**: 
+  - Windows/Mac: [Docker官网下载Docker Desktop](https://www.docker.com/products/docker-desktop)
+  - 群晖: 套件中心搜索"Docker"安装
+  - Linux: `curl -fsSL https://get.docker.com | sh`
+
+#### Python直接部署（适合开发者）
+- **Python**: 3.11版本 (不支持其他版本)
+- **获取方式**: [Python官网下载](https://www.python.org/downloads/)
+
+#### Git（代码管理，可选）
+- 用于获取最新代码和接收更新
+- **获取方式**: [Git官网下载](https://git-scm.com/downloads)
+
+---
+
 ## 快速开始
+
+> 💡 **新手建议**: 如果是第一次使用，推荐按顺序阅读每个部署方式，选择最适合你的方案。
 
 ### 使用Docker (推荐)
 
-#### 方式1：使用预构建镜像（推荐）
+#### 方式1：使用预构建镜像（推荐给新手）
+
+> 🎯 **适合人群**: 不想折腾，直接使用的用户  
+> ⏰ **部署时间**: 3-5分钟  
+> 📦 **镜像大小**: ~200MB  
+
+**第一步：创建工作目录**
 ```bash
-# 直接使用GitHub自动构建的镜像
+# Windows用户在CMD或PowerShell中执行：
+mkdir excel-processor
+cd excel-processor
+mkdir uploads
+mkdir output  
+mkdir logs
+
+# macOS/Linux用户在终端中执行：
+mkdir excel-processor
+cd excel-processor
+mkdir -p uploads output logs
+```
+
+**第二步：拉取并运行镜像**
+```bash
+# Linux/macOS用户执行：
 docker run -d \
   -p 4009:4009 \
   -v $(pwd)/uploads:/app/uploads \
   -v $(pwd)/output:/app/output \
   -v $(pwd)/logs:/app/logs \
   --name excel-processor \
+  --restart unless-stopped \
   ghcr.io/cls3389/koukuanshibai-web:latest
 
-# 访问应用
-# http://localhost:4009
+# Windows用户执行：
+docker run -d -p 4009:4009 -v %cd%/uploads:/app/uploads -v %cd%/output:/app/output -v %cd%/logs:/app/logs --name excel-processor --restart unless-stopped ghcr.io/cls3389/koukuanshibai-web:latest
 ```
 
-#### 方式2：使用Docker Compose
+**第三步：验证部署**
 ```bash
-# 克隆项目
+# 1. 检查容器是否运行
+docker ps
+
+# 2. 检查应用健康状态  
+curl http://localhost:4009/health
+# 如果没有curl，直接在浏览器打开：http://localhost:4009/health
+
+# 3. 访问应用界面
+# 在浏览器输入：http://localhost:4009
+```
+
+**说明解释**:
+- `-d`: 后台运行容器
+- `-p 4009:4009`: 将容器4009端口映射到本机4009端口
+- `-v`: 挂载目录，让容器能访问本机文件
+- `--restart unless-stopped`: 开机自启动
+
+#### 方式2：使用Docker Compose（推荐给熟悉命令行的用户）
+
+> 🎯 **适合人群**: 需要自定义配置，或想了解项目结构的用户  
+> ⏰ **部署时间**: 5-10分钟  
+> 📁 **需要**: 下载项目源码  
+
+**第一步：获取项目源码**
+```bash
+# 使用Git克隆（推荐）
 git clone https://github.com/cls3389/koukuanshibai-web.git
 cd koukuanshibai-web
 
-# 启动服务（会自动创建必要目录）
+# 或者手动下载：
+# 1. 访问 https://github.com/cls3389/koukuanshibai-web
+# 2. 点击绿色"Code"按钮 → "Download ZIP"  
+# 3. 解压到任意目录，进入该目录
+```
+
+**第二步：启动服务**
+```bash
+# 一键启动（会自动创建必要目录）
 docker-compose up -d
 
-# 访问应用
-# http://localhost:4009
+# 上面命令做了什么：
+# 1. 自动创建uploads、output、logs目录
+# 2. 构建或拉取Docker镜像
+# 3. 启动Web服务
+# 4. 配置健康检查
+```
 
-# 查看日志
+**第三步：验证和管理**
+```bash
+# 查看服务状态
+docker-compose ps
+
+# 查看实时日志
 docker-compose logs -f
+# (按Ctrl+C退出日志查看)
 
-# 停止服务
+# 访问应用：http://localhost:4009
+
+# 停止服务  
 docker-compose down
+
+# 重启服务
+docker-compose restart
 ```
 
 #### 方式3：本地构建Docker镜像
@@ -148,56 +246,143 @@ docker exec -it excel-processor-local sh
 curl -v http://localhost:4009/health
 ```
 
-### 群晖NAS部署
+### 群晖NAS部署（详细教程）
+
+> 🏠 **适合人群**: 群晖NAS用户，想在家庭网络内部署  
+> ⚙️ **前置条件**: 群晖DSM 7.0+，开启SSH服务  
+> 📺 **访问方式**: 局域网内所有设备都能访问  
+
+#### 准备工作（必读！）
+
+**第一步：开启SSH服务**
+1. 登录群晖管理界面
+2. 控制面板 → 终端机和SNMP
+3. 勾选"启动SSH功能"，端口保持22
+4. 点击应用
+
+**第二步：安装必要套件**
+```
+套件中心搜索并安装：
+- Docker（推荐方式1需要）
+- Python 3.11（推荐方式2需要）  
+- Git Server（可选，用于代码管理）
+```
 
 #### 方式1：Docker部署（推荐）
+
+> 🎯 **适合**: 不想安装Python环境的用户  
+> 🔧 **管理**: 图形界面管理，重启自启动  
+
+**第一步：SSH连接群晖**
 ```bash
-# SSH登录群晖NAS
+# 替换your-nas-ip为你的群晖IP地址
+# 例如：ssh admin@192.168.1.100
 ssh admin@your-nas-ip
 
-# 确保Docker已安装并启动（套件中心）
+# 输入管理员密码后进入命令行
+```
 
-# 首次部署：克隆项目
+**第二步：获取项目代码**
+```bash
+# 建议在homes目录下操作
+cd /volume1/homes/admin
+
+# 首次部署：下载项目代码
 git clone https://github.com/cls3389/koukuanshibai-web.git
 cd koukuanshibai-web
 
-# Docker部署（可选择是否更新代码）
-./dsm/docker-start.sh
-# 脚本会询问是否拉取最新代码，5秒后自动跳过
+# 查看项目文件
+ls -la
+# 应该看到dsm文件夹和各种配置文件
+```
 
-# 手动更新代码后部署
-git pull
+**第三步：Docker一键部署**
+```bash
+# 运行部署脚本
 ./dsm/docker-start.sh
 
-# 查看Docker状态  
+# 脚本会询问：是否拉取最新代码？(y/N，5秒后自动跳过)
+# 新手建议：直接按回车跳过，使用当前代码
+
+# 等待看到：✅ 容器启动成功
+# 和显示的访问地址
+```
+
+**第四步：验证部署**
+```bash
+# 查看详细状态
 ./dsm/docker-status.sh
 
-# 停止Docker服务
-./dsm/docker-stop.sh
-
-# 访问地址：http://your-nas-ip:4009
+# 应该看到：
+# ✅ Docker服务正常
+# ✅ 应用响应正常
+# 🌐 网络访问: http://your-nas-ip:4009
 ```
 
 #### 方式2：Python直接部署
-```bash
-# SSH登录群晖NAS
-ssh admin@your-nas-ip
 
-# 安装Python 3.11（套件中心）
-# 然后克隆项目
+> 🎯 **适合**: 熟悉Python的用户  
+> 🔧 **特点**: 直接运行，资源占用更少  
+
+**准备：安装Python 3.11**
+- 套件中心搜索"Python 3.11"安装
+- 等待安装完成（约5-10分钟）
+
+**部署步骤：**
+```bash
+# 连接SSH
+ssh admin@your-nas-ip
+cd /volume1/homes/admin
+
+# 下载代码（如果没有的话）
 git clone https://github.com/cls3389/koukuanshibai-web.git
 cd koukuanshibai-web
 
-# 使用Python脚本启动
+# Python部署
 ./dsm/start.sh
 
+# 等待看到：✅ 应用启动成功
 # 查看状态
 ./dsm/status.sh
 
-# 停止服务
+# 停止服务（需要时）
 ./dsm/stop.sh
+```
 
-# 访问地址：http://your-nas-ip:4009
+#### 常见问题解决
+
+**问题1：SSH连接失败**
+```
+解决方案：
+1. 确认群晖IP地址正确
+2. 确认SSH服务已开启
+3. 检查防火墙设置
+4. 尝试用admin用户名登录
+```
+
+**问题2：Docker服务未启动**
+```
+解决方案：
+1. 群晖管理界面 → 套件中心
+2. 找到Docker，点击运行
+3. 等待启动完成再重试
+```
+
+**问题3：端口4009无法访问**
+```
+解决方案：
+1. 群晖管理界面 → 控制面板 → 安全性
+2. 防火墙 → 编辑规则
+3. 添加4009端口允许访问
+```
+
+**问题4：Python版本不对**
+```bash
+# 检查Python版本
+python3.11 --version
+# 应该显示Python 3.11.x
+
+# 如果没有，重新安装Python 3.11套件
 ```
 
 ### 本地开发调试
