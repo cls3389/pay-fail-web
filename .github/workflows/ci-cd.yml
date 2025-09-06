@@ -75,13 +75,15 @@ jobs:
         cat .dockerignore || echo "No .dockerignore file"
 
     - name: Build Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: ./Dockerfile.github
-        push: false
-        tags: excel-processor:latest
-        platforms: linux/amd64
+      run: |
+        echo "🔨 Building Docker image..."
+        echo "📋 Docker version:"
+        docker --version
+        echo "📋 Docker build context:"
+        ls -la
+        echo "📋 Starting build..."
+        docker build -f Dockerfile.github -t excel-processor:latest . --no-cache
+        echo "✅ Docker build completed"
 
     - name: Test Docker image
       run: |
