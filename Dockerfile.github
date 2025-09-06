@@ -24,7 +24,6 @@ RUN pip install --no-cache-dir pandas
 RUN pip install --no-cache-dir flask flask-cors
 RUN pip install --no-cache-dir openpyxl werkzeug
 RUN pip install --no-cache-dir pypinyin gunicorn
-RUN pip cache purge
 
 # 复制应用代码
 COPY . .
