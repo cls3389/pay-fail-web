@@ -15,19 +15,15 @@ from pathlib import Path
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
-from excel_processor import excel_service
-from config import Config
+from excel_processor_standalone import process_excel_file
 
 def 处理Excel文件(文件路径):
     """处理Excel文件的主要函数"""
     print(f"📁 正在处理文件: {文件路径}")
     
     try:
-        # 确保输出目录存在
-        Config.init_app()
-        
-        # 使用Web版本的核心处理逻辑
-        result = excel_service.process_excel_file(文件路径, "output")
+        # 使用独立版本的核心处理逻辑 - 输出到当前目录
+        result = process_excel_file(文件路径)
         
         if result['success']:
             print(f"✅ 处理成功！")
@@ -76,8 +72,8 @@ def 主程序():
     print("   • 格式化应还款金额为数字格式")
     print("   • 创建透视表，按直营中心、团队、业务经理、客户姓名分组")
     print("   • 智能排序：按团队和业务经理的去重客户数量排序")
-    print("   • 专业表格样式：条件格式、千分位分隔符、单元格合并")
-    print("   • 自动文件清理：保留最近1天的处理文件")
+    print("   • 专业表格样式：条件格式、千分位分隔符")
+    print("   • 输出文件：保存到exe文件所在目录，带时间戳命名")
     print("=" * 60)
     
     # 检查命令行参数

@@ -1,19 +1,19 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+
 a = Analysis(
     ['excel_processor_cli.py'],
     pathex=[],
     binaries=[],
-    datas=[],  # 移除Web相关文件
-    hiddenimports=['pandas', 'openpyxl', 'pypinyin'],  # 只保留必需依赖
+    datas=[],
+    hiddenimports=['pandas', 'openpyxl', 'pypinyin'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=['flask', 'werkzeug', 'jinja2', 'click', 'itsdangerous', 'markupsafe'],  # 排除Web依赖
+    excludes=['flask', 'werkzeug', 'jinja2', 'click', 'itsdangerous', 'markupsafe'],
     noarchive=False,
     optimize=0,
 )
-
 pyz = PYZ(a.pure)
 
 exe = EXE(
@@ -25,8 +25,8 @@ exe = EXE(
     name='扣款失败信息处理工具',
     debug=False,
     bootloader_ignore_signals=False,
-    strip=False,   # 禁用strip加快构建速度
-    upx=False,     # 禁用UPX压缩加快构建
+    strip=True,
+    upx=False,
     upx_exclude=[],
     runtime_tmpdir=None,
     console=True,
@@ -35,5 +35,4 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='icon.ico' if os.path.exists('icon.ico') else None,
 )

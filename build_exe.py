@@ -34,24 +34,35 @@ def 构建exe():
         shutil.rmtree("dist")
         print("🧹 清理旧的dist目录")
     
-    # 构建命令
-    cmd = [
-        "pyinstaller",
-        "--onefile",  # 单文件模式
-        "--console",  # 显示控制台
-        "--name", "扣款失败信息处理工具",
-        "--icon", "icon.ico" if os.path.exists("icon.ico") else None,
-        "--add-data", "templates;templates",  # 包含模板文件
-        "--add-data", "static;static",        # 包含静态文件
-        "--hidden-import", "pandas",
-        "--hidden-import", "openpyxl",
-        "--hidden-import", "flask",
-        "--hidden-import", "pypinyin",
-        "excel_processor_cli.py"
-    ]
+    # 使用spec文件构建（更精确的配置）
+    if os.path.exists("excel_processor_cli.spec"):
+        print("✅ 使用现有spec文件进行构建")
+        cmd = ["pyinstaller", "excel_processor_cli.spec"]
+    else:
+        # 备用的直接构建命令
+        cmd = [
+            "pyinstaller",
+            "--onefile",  # 单文件模式
+            "--console",  # 显示控制台
+            "--name", "扣款失败信息处理工具",
+            "--strip",    # 去除符号信息，减小体积
+            "--noupx",    # 禁用UPX压缩（加快构建速度）
+            "--hidden-import", "pandas",
+            "--hidden-import", "openpyxl",
+            "--hidden-import", "pypinyin",
+            # 排除Web相关模块以减少构建时间和大小
+            "--exclude-module", "flask",
+            "--exclude-module", "werkzeug", 
+            "--exclude-module", "jinja2",
+            "--exclude-module", "click",
+            "--exclude-module", "itsdangerous",
+            "--exclude-module", "markupsafe",
+            "excel_processor_cli.py"
+        ]
     
-    # 过滤None值
-    cmd = [arg for arg in cmd if arg is not None]
+    # 添加图标（如果存在）
+    if os.path.exists("icon.ico"):
+        cmd.extend(["--icon", "icon.ico"])
     
     print("📦 执行构建命令:")
     print(" ".join(cmd))
