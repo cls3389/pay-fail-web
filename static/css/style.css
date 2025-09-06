@@ -144,6 +144,142 @@ body{
 }
 
 /* =========================================================
+   Excel表格样式
+========================================================= */
+/* 直营中心标题行 */
+.excel-center-title {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    padding: 12px 16px;
+    margin: 0;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Excel表格容器 */
+.excel-table-container {
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    background: white;
+}
+
+/* Excel表格包装器 */
+.excel-table-wrapper {
+    overflow: hidden;
+}
+
+/* Excel表格 */
+.excel-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Microsoft YaHei', sans-serif;
+    font-size: 14px;
+    background: white;
+}
+
+/* Excel表头 */
+.excel-table thead th {
+    background: #f8f9fa;
+    color: #333;
+    font-weight: 600;
+    padding: 12px 8px;
+    text-align: center;
+    border: 1px solid #dee2e6;
+    white-space: nowrap;
+}
+
+/* Excel表格单元格 */
+.excel-table td {
+    padding: 8px;
+    border: 1px solid #dee2e6;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* 金额单元格 */
+.excel-table .amount-cell {
+    text-align: right;
+    font-weight: 500;
+    color: #28a745;
+}
+
+/* 高亮单元格 */
+.excel-table .highlight-cell {
+    background: #fff3cd;
+    font-weight: 600;
+}
+
+/* 合并单元格 */
+.excel-table .merged-cell {
+    background: #e9ecef;
+    font-weight: 500;
+}
+
+/* 表格按钮组 */
+.table-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 12px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 0 0 8px 8px;
+}
+
+.table-actions button {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.table-actions button:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+/* 响应式表格 */
+@media (max-width: 768px) {
+    .excel-table {
+        font-size: 12px;
+    }
+    
+    .excel-table thead th,
+    .excel-table td {
+        padding: 6px 4px;
+    }
+    
+    .excel-center-title {
+        font-size: 1rem;
+        padding: 10px 12px;
+        min-height: 45px;
+    }
+    
+    .table-actions {
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .table-actions button {
+        width: 100%;
+    }
+}
+
+/* =========================================================
    其余原有样式（Excel 表格、打印、滚动条等）保持不变
 ========================================================= */
 /* 复制按钮、Excel 下载、表格响应式等样式与你原有完全一致，略。 */

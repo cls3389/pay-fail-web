@@ -551,7 +551,7 @@ class ExcelProcessorService:
         # 定义样式
         标题字体 = Font(name='微软雅黑', size=11, bold=True, color='000000')
         内容字体 = Font(name='微软雅黑', size=10, color='000000')
-        直营中心标题字体 = Font(name='微软雅黑', size=12, bold=True, color='000000')
+        直营中心标题字体 = Font(name='微软雅黑', size=14, bold=True, color='000000')
         居中对齐 = Alignment(horizontal='center', vertical='center')
         边框样式 = Border(
             left=Side(style='thin'), right=Side(style='thin'),
@@ -567,9 +567,9 @@ class ExcelProcessorService:
                 if col == 1 and cell.value and ws.cell(row=row, column=2).value is None and ws.cell(row=row, column=3).value is None:
                     # 直营中心标题样式
                     cell.font = 直营中心标题字体
-                    cell.alignment = 居中对齐
+                    cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
                     cell.fill = PatternFill(start_color='E6F3FF', end_color='E6F3FF', fill_type='solid')
-                    ws.row_dimensions[row].height = 25
+                    ws.row_dimensions[row].height = 35  # 增加高度
                 elif any(keyword in str(cell.value or '') for keyword in ['所属团队', '所属业务经理', '客户姓名', '应还款金额']):
                     # 表头样式
                     cell.font = 标题字体
