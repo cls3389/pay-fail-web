@@ -569,7 +569,7 @@ class ExcelProcessorService:
                     cell.font = 直营中心标题字体
                     cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
                     cell.fill = PatternFill(start_color='E6F3FF', end_color='E6F3FF', fill_type='solid')
-                    ws.row_dimensions[row].height = 35  # 增加高度
+                    ws.row_dimensions[row].height = 25  # 与CSS前端保持一致
                 elif any(keyword in str(cell.value or '') for keyword in ['所属团队', '所属业务经理', '客户姓名', '应还款金额']):
                     # 表头样式
                     cell.font = 标题字体
