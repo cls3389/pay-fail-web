@@ -18,9 +18,13 @@ WORKDIR /app
 
 # 复制并安装Python依赖
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt && \
-    pip cache purge
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+RUN pip install --no-cache-dir numpy
+RUN pip install --no-cache-dir pandas
+RUN pip install --no-cache-dir flask flask-cors
+RUN pip install --no-cache-dir openpyxl werkzeug
+RUN pip install --no-cache-dir pypinyin gunicorn
+RUN pip cache purge
 
 # 复制应用代码
 COPY . .
