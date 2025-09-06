@@ -1,2 +1,1 @@
-# This file ensures the uploads directory is tracked by Git
-# Excel files uploaded by users will be stored here
+# 保持uploads目录结构

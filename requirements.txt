@@ -5,3 +5,4 @@ openpyxl>=3.0.7
 werkzeug>=2.0.1
 pypinyin>=0.44.0
 gunicorn>=23.0.0
+pytest>=6.0.0
