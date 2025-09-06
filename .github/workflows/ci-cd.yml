@@ -74,16 +74,34 @@ jobs:
         echo "📄 .dockerignore contents:"
         cat .dockerignore || echo "No .dockerignore file"
 
-    - name: Build Docker image
-      run: |
-        echo "🔨 Building Docker image..."
-        echo "📋 Docker version:"
-        docker --version
-        echo "📋 Docker build context:"
-        ls -la
-        echo "📋 Starting build..."
-        docker build -f Dockerfile.github -t excel-processor:latest . --no-cache
-        echo "✅ Docker build completed"
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ghcr.io/${{ github.repository }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile.github
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
 
     - name: Test Docker image
       run: |
@@ -98,7 +116,7 @@ jobs:
           -v $(pwd)/uploads:/app/uploads \
           -v $(pwd)/output:/app/output \
           -v $(pwd)/logs:/app/logs \
-          excel-processor:latest
+          ghcr.io/${{ github.repository }}:latest
         
         # 等待容器启动
         echo "⏳ Waiting for container to start..."
@@ -159,8 +177,13 @@ jobs:
 
     - name: Deploy to production
       run: |
-        echo "Deployment would happen here"
-        # 这里可以添加实际的部署脚本，比如：
-        # - 推送到Docker Hub
-        # - 部署到云平台
-        # - 触发服务器更新
+        echo "🚀 Docker镜像已成功构建并推送到GitHub Container Registry"
+        echo "📦 镜像地址: ghcr.io/${{ github.repository }}:latest"
+        echo "📦 所有标签:"
+        echo "${{ steps.meta.outputs.tags }}"
+        echo ""
+        echo "🔧 使用方法:"
+        echo "docker pull ghcr.io/${{ github.repository }}:latest"
+        echo "docker run -d -p 4009:4009 ghcr.io/${{ github.repository }}:latest"
+        echo ""
+        echo "✅ 部署完成！"
