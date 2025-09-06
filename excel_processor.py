@@ -578,9 +578,25 @@ class ExcelProcessorService:
                     cell.font = 直营中心标题字体
                     cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
                     cell.fill = PatternFill(start_color='E6F3FF', end_color='E6F3FF', fill_type='solid')
-                    cell.border = 边框样式  # 添加边框
                     ws.row_dimensions[row].height = 25  # 浅蓝色背景，高度25
-                    print(f"      DEBUG: 设置行高为25px，添加边框")
+                    print(f"      DEBUG: 设置行高为25px")
+                    
+                    # 为整个合并单元格区域添加边框
+                    for merged_range in ws.merged_cells.ranges:
+                        if cell.coordinate in merged_range:
+                            # 获取合并单元格的范围
+                            start_row = merged_range.min_row
+                            end_row = merged_range.max_row
+                            start_col = merged_range.min_col
+                            end_col = merged_range.max_col
+                            
+                            # 为合并单元格的所有边界添加边框
+                            for r in range(start_row, end_row + 1):
+                                for c in range(start_col, end_col + 1):
+                                    border_cell = ws.cell(row=r, column=c)
+                                    border_cell.border = 边框样式
+                            print(f"      DEBUG: 为合并单元格区域添加边框: {merged_range}")
+                            break
                 elif any(keyword in str(cell.value or '') for keyword in ['所属团队', '所属业务经理', '客户姓名', '应还款金额']):
                     # 表头样式
                     cell.font = 标题字体
