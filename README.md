@@ -17,16 +17,92 @@
 
 ### 使用Docker (推荐)
 
+#### 方式1：使用预构建镜像（推荐）
+```bash
+# 直接使用GitHub自动构建的镜像
+docker run -d \
+  -p 4009:4009 \
+  -v $(pwd)/uploads:/app/uploads \
+  -v $(pwd)/output:/app/output \
+  -v $(pwd)/logs:/app/logs \
+  --name excel-processor \
+  ghcr.io/cls3389/koukuanshibai-web:latest
+
+# 访问应用
+# http://localhost:4009
+```
+
+#### 方式2：使用Docker Compose
 ```bash
 # 克隆项目
-git clone https://github.com/your-username/koukuanshibai-web.git
+git clone https://github.com/cls3389/koukuanshibai-web.git
 cd koukuanshibai-web
 
-# 使用Docker Compose启动
+# 启动服务（会自动创建必要目录）
 docker-compose up -d
 
 # 访问应用
 # http://localhost:4009
+
+# 查看日志
+docker-compose logs -f
+
+# 停止服务
+docker-compose down
+```
+
+#### 方式3：本地构建Docker镜像
+```bash
+# 克隆项目
+git clone https://github.com/cls3389/koukuanshibai-web.git
+cd koukuanshibai-web
+
+# 创建必要目录（重要！）
+mkdir -p uploads output logs
+
+# 构建镜像
+docker build -t excel-processor:local .
+
+# 运行容器
+docker run -d \
+  -p 4009:4009 \
+  -v $(pwd)/uploads:/app/uploads \
+  -v $(pwd)/output:/app/output \
+  -v $(pwd)/logs:/app/logs \
+  --name excel-processor-local \
+  excel-processor:local
+
+# Windows用户使用以下命令
+docker run -d \
+  -p 4009:4009 \
+  -v %cd%/uploads:/app/uploads \
+  -v %cd%/output:/app/output \
+  -v %cd%/logs:/app/logs \
+  --name excel-processor-local \
+  excel-processor:local
+```
+
+### 群晖NAS部署
+
+```bash
+# SSH登录群晖NAS
+ssh admin@your-nas-ip
+
+# 安装Python 3.11（套件中心）
+# 然后克隆项目
+git clone https://github.com/cls3389/koukuanshibai-web.git
+cd koukuanshibai-web
+
+# 使用专用脚本启动
+./dsm/start.sh
+
+# 查看状态
+./dsm/status.sh
+
+# 停止服务
+./dsm/stop.sh
+
+# 访问地址：http://your-nas-ip:4009
 ```
 
 ### 本地开发调试

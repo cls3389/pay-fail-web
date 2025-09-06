@@ -1,6 +1,20 @@
 version: '3.8'
 
 services:
+  # 初始化服务 - 确保宿主机目录存在
+  init:
+    image: busybox:latest
+    volumes:
+      - ./uploads:/app/uploads
+      - ./output:/app/output  
+      - ./logs:/app/logs
+    command: |
+      sh -c "
+        mkdir -p /app/uploads /app/output /app/logs &&
+        chmod 755 /app/uploads /app/output /app/logs &&
+        echo '✅ 目录初始化完成'
+      "
+
   excel-processor:
     build:
       context: .
@@ -18,6 +32,8 @@ services:
       - ./uploads:/app/uploads
       - ./output:/app/output
       - ./logs:/app/logs
+    depends_on:
+      - init
     networks:
       - excel-network
     healthcheck:
