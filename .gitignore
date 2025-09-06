@@ -52,6 +52,9 @@ logs/*.log
 *.swo
 *~
 
+# Cursor
+cursor_rules.yaml
+
 # OS
 .DS_Store
 .DS_Store?
