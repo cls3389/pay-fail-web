@@ -27,5 +27,5 @@ RUN mkdir -p uploads output logs && chown -R appuser:appgroup /app
 USER appuser
 EXPOSE 4009
 
-# 4. 启动
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:4009", "excel_web:app"]
+# 4. 启动 - 优化配置：少量用户场景
+CMD ["gunicorn", "-w", "2", "--threads", "2", "--max-requests", "1000", "--max-requests-jitter", "100", "-b", "0.0.0.0:4009", "excel_web:app"]
