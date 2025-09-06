@@ -8,10 +8,7 @@ permissions:
 
 on:
   push:
-    branches: [ main, master ]
     tags: [ 'v*' ]  # 只有 v1.0.0 这类 tag 会触发构建和推送
-  pull_request:
-    branches: [ main, master ]
   workflow_dispatch:  # 允许手动触发
 
 env:
