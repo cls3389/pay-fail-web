@@ -576,8 +576,8 @@ class ExcelProcessorService:
                     cell.alignment = 居中对齐
                     cell.border = 边框样式
                     ws.row_dimensions[row].height = 22
-                elif cell.value is None or str(cell.value).strip() == '':
-                    # 空行
+                elif (cell.value is None or str(cell.value).strip() == '') and not (col == 1 and ws.cell(row=row, column=2).value is None and ws.cell(row=row, column=3).value is None):
+                    # 空行（排除直营中心标题行）
                     ws.row_dimensions[row].height = 15
                 else:
                     # 数据行样式
