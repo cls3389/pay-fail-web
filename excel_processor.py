@@ -563,8 +563,8 @@ class ExcelProcessorService:
             for col in range(1, num_columns + 1):
                 cell = ws.cell(row=row, column=col)
                 
-                # 检查是否为直营中心标题行（通过合并单元格判断）
-                if col == 1 and cell.value and cell.coordinate in ws.merged_cells:
+                # 检查是否为直营中心标题行（通过值内容判断）
+                if col == 1 and cell.value and '直营中心' in str(cell.value):
                     # 直营中心标题样式
                     cell.font = 直营中心标题字体
                     cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
