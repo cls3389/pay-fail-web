@@ -566,10 +566,12 @@ class ExcelProcessorService:
                 # 检查是否为直营中心标题行（通过合并单元格判断）
                 if col == 1 and cell.value and ws.cell(row=row, column=2).value is None and ws.cell(row=row, column=3).value is None:
                     # 直营中心标题样式
+                    print(f"      DEBUG: 检测到直营中心标题行 {row}: {cell.value}")
                     cell.font = 直营中心标题字体
                     cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
                     cell.fill = PatternFill(start_color='E6F3FF', end_color='E6F3FF', fill_type='solid')
                     ws.row_dimensions[row].height = 25  # 与CSS前端保持一致
+                    print(f"      DEBUG: 设置行高为25px")
                 elif any(keyword in str(cell.value or '') for keyword in ['所属团队', '所属业务经理', '客户姓名', '应还款金额']):
                     # 表头样式
                     cell.font = 标题字体
@@ -578,6 +580,7 @@ class ExcelProcessorService:
                     ws.row_dimensions[row].height = 22
                 elif (cell.value is None or str(cell.value).strip() == '') and not (col == 1 and ws.cell(row=row, column=2).value is None and ws.cell(row=row, column=3).value is None):
                     # 空行（排除直营中心标题行）
+                    print(f"      DEBUG: 检测到空行 {row}")
                     ws.row_dimensions[row].height = 15
                 else:
                     # 数据行样式
