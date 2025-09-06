@@ -7,7 +7,8 @@
 - **版本**: 1.0.0
 - **架构**: linux/amd64
 - **镜像大小**: ~150MB（基于Alpine Linux）
-- **内存占用**: ~50MB（运行时）
+- **内存占用**: ~80MB（运行时，2个worker进程）
+- **并发能力**: 支持多用户同时处理文件
 
 ## 🔧 快速部署
 
@@ -188,15 +189,15 @@ docker exec -it excel-processor curl http://localhost:4009/health
 # 轻量级运行（推荐配置）
 docker run -d \
   --name excel-processor \
-  --memory="128m" \
+  --memory="200m" \
   --cpus="0.5" \
   -p 4009:4009 \
   ghcr.io/cls3389/koukuanshibai-web:latest
 
-# 标准运行
+# 标准运行（支持并发）
 docker run -d \
   --name excel-processor \
-  --memory="256m" \
+  --memory="400m" \
   --cpus="1.0" \
   -p 4009:4009 \
   ghcr.io/cls3389/koukuanshibai-web:latest
