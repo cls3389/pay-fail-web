@@ -1,10 +1,11 @@
 import os
+import secrets
 from pathlib import Path
 
 class Config:
     """应用配置类"""
     # Flask配置
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'excel-processor-2025'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or secrets.token_hex(32)
     
     # 文件上传配置
     UPLOAD_FOLDER = 'uploads'
