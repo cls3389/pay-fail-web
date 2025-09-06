@@ -489,6 +489,83 @@ docker run -d -p 4009:4009 ghcr.io/your-username/koukuanshibai-web:latest
 
 MIT License
 
+## 常见问题FAQ
+
+### 部署相关
+
+**Q1: 我是完全的小白，应该选择哪种部署方式？**
+A: 推荐使用"方式1：使用预构建镜像"，只需要安装Docker Desktop，然后复制粘贴几行命令就能运行。
+
+**Q2: Windows/Mac如何安装Docker？**
+A: 
+- 访问 https://www.docker.com/products/docker-desktop
+- 下载Docker Desktop for Windows/Mac
+- 双击安装，按提示完成
+- 安装后重启电脑，看到Docker图标启动即可
+
+**Q3: 如何知道部署成功了？**
+A: 
+- 在浏览器输入 http://localhost:4009
+- 看到Excel上传界面就说明成功了
+- 或者运行 `curl http://localhost:4009/health` 返回健康状态
+
+**Q4: 端口4009被占用怎么办？**
+A: 修改端口映射，例如改为4010：
+```bash
+# 将 -p 4009:4009 改为 -p 4010:4009
+docker run -d -p 4010:4009 ...
+# 然后访问 http://localhost:4010
+```
+
+### 功能使用
+
+**Q5: 支持什么格式的Excel文件？**
+A: 支持 .xlsx 和 .xls 格式，文件大小限制16MB。
+
+**Q6: 必须包含哪些列？**
+A: 必须包含：应还款金额、所属直营中心、所属团队、所属业务经理、客户姓名
+
+**Q7: 处理后的文件在哪里？**
+A: 
+- Docker部署：在你创建的 `output` 文件夹内
+- 网页界面：处理完成后点击下载链接
+
+**Q8: 文件会被自动删除吗？**
+A: 是的，超过1天的处理文件会自动清理，节省存储空间。
+
+### 故障排除
+
+**Q9: Docker容器启动失败怎么办？**
+A:
+```bash
+# 查看错误日志
+docker logs excel-processor
+
+# 检查端口是否被占用
+netstat -an | grep 4009
+
+# 重新启动容器
+docker restart excel-processor
+```
+
+**Q10: 群晖NAS无法访问4009端口？**
+A: 检查群晖防火墙设置，添加4009端口到允许列表。
+
+**Q11: 上传文件后没有反应？**
+A: 
+- 检查文件格式是否为 .xlsx 或 .xls
+- 检查文件大小是否超过16MB
+- 确认文件包含所有必需列
+
+## 技术支持
+
+遇到问题？可以通过以下方式获取帮助：
+
+1. **查看日志**: `docker logs excel-processor`
+2. **健康检查**: 访问 `http://localhost:4009/health`
+3. **重启服务**: `docker restart excel-processor`
+4. **GitHub Issues**: 在项目页面提交问题
+
 ## 贡献
 
 欢迎提交Issues和Pull Requests！

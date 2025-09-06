@@ -36,3 +36,4 @@ class Config:
         """初始化应用目录"""
         Path(Config.UPLOAD_FOLDER).mkdir(exist_ok=True)
         Path(Config.OUTPUT_FOLDER).mkdir(exist_ok=True)
+        Path('logs').mkdir(exist_ok=True)

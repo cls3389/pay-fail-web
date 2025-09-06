@@ -53,7 +53,7 @@ fi
 
 # 安装/检查依赖
 echo "📦 检查Python依赖..."
-$PIP_CMD install --user gunicorn flask pandas openpyxl pypinyin > /dev/null 2>&1
+$PIP_CMD install --user gunicorn flask flask-cors pandas openpyxl pypinyin > /dev/null 2>&1
 if [ $? -eq 0 ]; then
     echo "✅ 依赖检查完成"
 else
