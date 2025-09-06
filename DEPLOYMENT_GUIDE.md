@@ -6,6 +6,8 @@
 - **仓库地址**: https://github.com/cls3389/koukuanshibai-web/pkgs/container/koukuanshibai-web
 - **版本**: 1.0.0
 - **架构**: linux/amd64
+- **镜像大小**: ~150MB（基于Alpine Linux）
+- **内存占用**: ~50MB（运行时）
 
 ## 🔧 快速部署
 
@@ -181,12 +183,20 @@ docker exec -it excel-processor curl http://localhost:4009/health
 
 ## 📈 性能优化
 
-### 资源限制
+### 资源限制（已优化）
 ```bash
-# 限制内存使用
+# 轻量级运行（推荐配置）
 docker run -d \
   --name excel-processor \
-  --memory="512m" \
+  --memory="128m" \
+  --cpus="0.5" \
+  -p 4009:4009 \
+  ghcr.io/cls3389/koukuanshibai-web:latest
+
+# 标准运行
+docker run -d \
+  --name excel-processor \
+  --memory="256m" \
   --cpus="1.0" \
   -p 4009:4009 \
   ghcr.io/cls3389/koukuanshibai-web:latest

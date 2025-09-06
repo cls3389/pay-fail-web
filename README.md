@@ -465,11 +465,13 @@ docker run -d \
 
 ### 从GitHub Container Registry部署
 
+**🚀 超轻量级镜像** - 基于Alpine Linux，镜像体积仅约150MB，内存占用约50MB
+
 ```bash
-# 拉取镜像
+# 拉取镜像（约150MB）
 docker pull ghcr.io/cls3389/koukuanshibai-web:latest
 
-# 运行
+# 运行（内存占用约50MB）
 docker run -d -p 4009:4009 ghcr.io/cls3389/koukuanshibai-web:latest
 
 # 带数据卷运行（推荐）
