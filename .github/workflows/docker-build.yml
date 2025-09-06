@@ -34,7 +34,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-        # ✅ 不传 username/password，使用自动 OIDC 登录
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata for tags and labels
         id: meta

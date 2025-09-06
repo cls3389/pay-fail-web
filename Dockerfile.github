@@ -12,29 +12,25 @@ ENV PYTHONUNBUFFERED=1 \
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         curl \
-        ca-certificates && \
+        ca-certificates \
+        gcc \
+        g++ && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-# 创建应用用户
-RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
 # 设置工作目录
 WORKDIR /app
 
 # 复制并安装Python依赖
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # 复制应用代码
 COPY . .
 
-# 创建必要的目录并设置权限
-RUN mkdir -p uploads output logs && \
-    chown -R appuser:appgroup /app
-
-# 切换到非root用户
-USER appuser
+# 创建必要的目录
+RUN mkdir -p uploads output logs
 
 # 暴露端口
 EXPOSE 4009
@@ -43,5 +39,5 @@ EXPOSE 4009
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:4009/health || exit 1
 
-# 启动命令
-CMD ["python", "excel_web.py"]
+# 启动命令 - 使用gunicorn确保生产环境兼容性
+CMD ["gunicorn", "-w", "1", "--threads", "2", "--bind", "0.0.0.0:4009", "excel_web:app"]

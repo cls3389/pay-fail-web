@@ -32,10 +32,15 @@ jobs:
       run: |
         # 如果有测试文件，运行测试
         if [ -f "test_*.py" ]; then
-          python -m pytest -v
+          python -m pytest -v --tb=short
         else
           echo "No test files found"
         fi
+        
+        # 运行基本的应用导入测试
+        python -c "import excel_web; print('✅ excel_web module imported successfully')"
+        python -c "import excel_processor; print('✅ excel_processor module imported successfully')"
+        python -c "import file_cleaner; print('✅ file_cleaner module imported successfully')"
 
     - name: Lint with flake8
       run: |
@@ -70,8 +75,10 @@ jobs:
       run: |
         # 创建必要的目录
         mkdir -p uploads output logs
+        echo "📁 Created required directories"
         
         # 测试Docker镜像是否能正常启动
+        echo "🐳 Starting Docker container..."
         docker run --rm -d --name test-container \
           -p 4009:4009 \
           -v $(pwd)/uploads:/app/uploads \
@@ -80,16 +87,23 @@ jobs:
           excel-processor:latest
         
         # 等待容器启动
+        echo "⏳ Waiting for container to start..."
         sleep 15
         
         # 检查容器是否运行正常
         if docker ps | grep test-container; then
           echo "✅ Docker container is running"
           
+          # 显示容器日志
+          echo "📋 Container logs:"
+          docker logs test-container
+          
           # 等待应用完全启动
-          sleep 5
+          echo "⏳ Waiting for application to start..."
+          sleep 10
           
           # 测试健康检查端点
+          echo "🏥 Testing health check endpoint..."
           for i in {1..5}; do
             if curl -f http://localhost:4009/health; then
               echo "✅ Health check passed"
@@ -101,16 +115,24 @@ jobs:
           done
           
           # 测试主页
-          curl -f http://localhost:4009/ || echo "⚠️ Main page check failed"
+          echo "🏠 Testing main page..."
+          curl -f http://localhost:4009/ && echo "✅ Main page accessible" || echo "⚠️ Main page check failed"
+          
+          # 测试API端点
+          echo "🔌 Testing API endpoints..."
+          curl -f http://localhost:4009/api/stats && echo "✅ API stats endpoint working" || echo "⚠️ API stats check failed"
           
         else
           echo "❌ Docker container failed to start"
+          echo "📋 Container logs:"
           docker logs test-container
           exit 1
         fi
         
         # 清理测试容器
+        echo "🧹 Cleaning up test container..."
         docker stop test-container
+        echo "✅ Test completed successfully"
 
   deploy:
     runs-on: ubuntu-latest
