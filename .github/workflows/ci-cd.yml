@@ -28,7 +28,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run tests
+    - name: Run basic tests
       run: |
         # 运行基本的应用导入测试
         echo "Testing module imports..."
@@ -36,13 +36,15 @@ jobs:
         python -c "import excel_processor; print('✅ excel_processor module imported successfully')"
         python -c "import file_cleaner; print('✅ file_cleaner module imported successfully')"
         
-        # 如果有测试文件，运行测试
-        if [ -f "test_*.py" ]; then
-          echo "Running pytest tests..."
-          python -m pytest -v --tb=short --disable-warnings
-        else
-          echo "No test files found, skipping pytest"
-        fi
+        # 测试Flask应用创建
+        echo "Testing Flask app creation..."
+        python -c "from excel_web import create_app; app = create_app(); print('✅ Flask app created successfully')"
+        
+        # 测试配置加载
+        echo "Testing configuration..."
+        python -c "from config import Config; print('✅ Config loaded successfully')"
+        
+        echo "All basic tests passed!"
 
 
   build-docker:
