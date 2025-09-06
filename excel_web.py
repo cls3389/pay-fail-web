@@ -155,14 +155,6 @@ def download_file(filename):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/health')
-def health_check():
-    """健康检查接口"""
-    return jsonify({
-        'status': 'healthy',
-        'timestamp': datetime.now().isoformat(),
-        'version': '1.0.0'
-    })
 
 @app.route('/api/stats')
 def get_stats():

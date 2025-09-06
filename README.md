@@ -172,7 +172,7 @@ docker run -d \
   -v $(pwd)/uploads:/app/uploads \
   -v $(pwd)/output:/app/output \
   -v $(pwd)/logs:/app/logs \
-  --name excel-processor-local \
+  --name excel-processor-web \
   --restart unless-stopped \
   excel-processor:local
 
@@ -181,11 +181,11 @@ docker ps | grep excel-processor
 curl http://localhost:4009/health
 
 # 7. 查看日志
-docker logs excel-processor-local
+docker logs excel-processor-web
 
 # 8. 停止和清理
-docker stop excel-processor-local
-docker rm excel-processor-local
+docker stop excel-processor-web
+docker rm excel-processor-web
 ```
 
 ##### Windows用户（PowerShell/CMD）：
@@ -208,7 +208,7 @@ docker run -d ^
   -v %cd%/uploads:/app/uploads ^
   -v %cd%/output:/app/output ^
   -v %cd%/logs:/app/logs ^
-  --name excel-processor-local ^
+  --name excel-processor-web ^
   --restart unless-stopped ^
   excel-processor:local
 
@@ -237,10 +237,10 @@ docker build --build-arg HTTP_PROXY=http://proxy:8080 -t excel-processor:local .
 docker build -t excel-processor:local . 2>&1 | tee build.log
 
 # 检查容器日志
-docker logs excel-processor-local
+docker logs excel-processor-web
 
 # 进入容器调试
-docker exec -it excel-processor-local sh
+docker exec -it excel-processor-web sh
 
 # 检查健康状态
 curl -v http://localhost:4009/health
@@ -475,9 +475,8 @@ docker run -d -p 4009:4009 ghcr.io/your-username/koukuanshibai-web:latest
 
 ## 项目说明
 
-### 版本区别
-- **Web版本** (当前项目): 用于服务器部署，支持多用户在线使用
-- **本地版本**: 独立的exe可执行文件，适合单机使用
+### 项目特点
+- **Web版本**: 用于服务器部署，支持多用户在线使用，基于Flask + Docker
 
 ### 技术特点
 - 基于Flask框架的现代Web应用
