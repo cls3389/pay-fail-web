@@ -65,17 +65,23 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Build Docker image with cache
+    - name: Debug Docker context
+      run: |
+        echo "📁 Docker context contents:"
+        ls -la
+        echo "📄 Dockerfile.github contents:"
+        head -20 Dockerfile.github
+        echo "📄 .dockerignore contents:"
+        cat .dockerignore || echo "No .dockerignore file"
+
+    - name: Build Docker image
       uses: docker/build-push-action@v5
       with:
         context: .
         file: ./Dockerfile.github
         push: false
         tags: excel-processor:latest
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-        build-args: |
-          BUILDKIT_INLINE_CACHE=1
+        platforms: linux/amd64
 
     - name: Test Docker image
       run: |
