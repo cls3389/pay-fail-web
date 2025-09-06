@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}扣款失败信息处理工具{% endblock %}
+
+{% block content %}
+<div class="simple-layout">
+    <!-- 主标题 -->
+    <div class="main-title">
+        <h1 class="title-text">扣款失败信息处理工具</h1>
+        <p class="subtitle-text">选择Excel文件，自动完成数据处理</p>
+    </div>
+    
+    <!-- 主要操作区域 -->
+    <div class="main-action-area">
+        <!-- 文件选择区域 - 默认显示 -->
+        <div id="uploadSection" class="upload-container">
+            <div class="upload-dropzone" id="dropZone">
+                <div class="upload-icon">
+                    <i class="fas fa-file-excel"></i>
+                </div>
+                <h3 class="upload-title">选择Excel文件</h3>
+                <p class="upload-subtitle">点击选择或拖拽文件</p>
+                <input type="file" id="fileInput" name="file" accept=".xlsx,.xls" style="display: none;">
+                <button class="main-button" id="selectFileBtn">
+                    <i class="fas fa-folder-open"></i>
+                    选择文件
+                </button>
+            </div>
+        </div>
+        
+        <!-- 处理进度区域 -->
+        <div id="processSection" class="process-container" style="display: none;">
+            <div class="process-content">
+                <div class="loading-spinner"></div>
+                <h3 class="process-title">正在处理数据...</h3>
+                <p class="process-subtitle">请稍候，系统正在自动处理您的Excel文件</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 完成结果区域 -->
+        <div id="resultSection" class="result-container" style="display: none;">
+            <div class="result-content">
+
+                <h3 class="result-title">处理完成！</h3>
+                <p class="result-subtitle">您的Excel文件已成功处理，可以下载了</p>
+                <div class="result-actions">
+                    <button class="main-button download-button" id="downloadBtn">
+                        <i class="fas fa-download"></i>
+                        下载处理后的文件
+                    </button>
+                    <button class="secondary-button" id="resetBtn">
+                        <i class="fas fa-redo"></i>
+                        处理其他文件
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 错误提示区域 -->
+        <div id="errorSection" class="error-container" style="display: none;">
+            <div class="error-content">
+                <div class="error-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="error-title">处理失败</h3>
+                <p class="error-message" id="errorMessage">出现了一些问题，请重试</p>
+                <button class="secondary-button" id="retryBtn">
+                    <i class="fas fa-redo"></i>
+                    重新选择文件
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Excel风格表格模板 -->
+<script type="text/template" id="excelTableTemplate">
+    <div class="excel-table-container mb-4" data-center="{centerKey}">
+        <div class="excel-table-wrapper" id="excel-table-{centerKey}">
+            <!-- 直营中心标题行 -->
+            <div class="excel-center-title">
+                {centerTitle}
+            </div>
+            <!-- Excel风格表格 -->
+            <table class="excel-table">
+                <thead>
+                    <tr class="excel-header">
+                        {headers}
+                    </tr>
+                </thead>
+                <tbody>
+                    {rows}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</script>
+
+{% endblock %}

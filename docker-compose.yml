@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  excel-processor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: excel-processor-web
+    restart: unless-stopped
+    ports:
+      - "4009:4009"
+    environment:
+      - FLASK_ENV=production
+      - FLASK_PORT=4009
+      - SECRET_KEY=${SECRET_KEY:-excel-processor-production-key}
+      - MAX_CONTENT_LENGTH=16777216  # 16MB
+    volumes:
+      - ./uploads:/app/uploads
+      - ./output:/app/output
+      - ./logs:/app/logs
+    networks:
+      - excel-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4009/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "com.excel-processor.description=Excel数据处理工具Web版"
+      - "com.excel-processor.version=1.0.0"
+
+networks:
+  excel-network:
+    driver: bridge
+
+volumes:
+  uploads:
+    driver: local
+  output:
+    driver: local
+  logs:
+    driver: local
