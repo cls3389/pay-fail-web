@@ -52,34 +52,100 @@ docker-compose down
 ```
 
 #### 方式3：本地构建Docker镜像
+
+##### Linux/macOS用户：
 ```bash
-# 克隆项目
+# 1. 克隆项目
 git clone https://github.com/cls3389/koukuanshibai-web.git
 cd koukuanshibai-web
 
-# 创建必要目录（重要！）
+# 2. 创建必要目录（重要！）
 mkdir -p uploads output logs
 
-# 构建镜像
+# 3. 构建镜像
 docker build -t excel-processor:local .
 
-# 运行容器
+# 4. 检查镜像构建成功
+docker images | grep excel-processor
+
+# 5. 运行容器
 docker run -d \
   -p 4009:4009 \
   -v $(pwd)/uploads:/app/uploads \
   -v $(pwd)/output:/app/output \
   -v $(pwd)/logs:/app/logs \
   --name excel-processor-local \
+  --restart unless-stopped \
   excel-processor:local
 
-# Windows用户使用以下命令
-docker run -d \
-  -p 4009:4009 \
-  -v %cd%/uploads:/app/uploads \
-  -v %cd%/output:/app/output \
-  -v %cd%/logs:/app/logs \
-  --name excel-processor-local \
+# 6. 验证运行状态
+docker ps | grep excel-processor
+curl http://localhost:4009/health
+
+# 7. 查看日志
+docker logs excel-processor-local
+
+# 8. 停止和清理
+docker stop excel-processor-local
+docker rm excel-processor-local
+```
+
+##### Windows用户（PowerShell/CMD）：
+```cmd
+# 1. 克隆项目
+git clone https://github.com/cls3389/koukuanshibai-web.git
+cd koukuanshibai-web
+
+# 2. 创建必要目录
+mkdir uploads
+mkdir output  
+mkdir logs
+
+# 3. 构建镜像
+docker build -t excel-processor:local .
+
+# 4. 运行容器
+docker run -d ^
+  -p 4009:4009 ^
+  -v %cd%/uploads:/app/uploads ^
+  -v %cd%/output:/app/output ^
+  -v %cd%/logs:/app/logs ^
+  --name excel-processor-local ^
+  --restart unless-stopped ^
   excel-processor:local
+
+# 5. 验证运行
+docker ps
+curl http://localhost:4009/health
+
+# 访问应用：http://localhost:4009
+```
+
+##### 构建参数优化：
+```bash
+# 加速构建（使用buildkit）
+DOCKER_BUILDKIT=1 docker build -t excel-processor:local .
+
+# 多平台构建（需要buildx）
+docker buildx build --platform linux/amd64,linux/arm64 -t excel-processor:local .
+
+# 构建时指定代理（国内用户）
+docker build --build-arg HTTP_PROXY=http://proxy:8080 -t excel-processor:local .
+```
+
+##### 故障排查：
+```bash
+# 检查构建日志
+docker build -t excel-processor:local . 2>&1 | tee build.log
+
+# 检查容器日志
+docker logs excel-processor-local
+
+# 进入容器调试
+docker exec -it excel-processor-local sh
+
+# 检查健康状态
+curl -v http://localhost:4009/health
 ```
 
 ### 群晖NAS部署
