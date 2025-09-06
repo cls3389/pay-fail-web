@@ -45,8 +45,8 @@ jobs:
     - name: Lint with flake8
       run: |
         pip install flake8
-        # 运行基本的代码检查
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # 运行代码检查，使用.flake8配置文件
+        flake8 . --count --show-source --statistics
 
   build-docker:
     runs-on: ubuntu-latest
