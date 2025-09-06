@@ -11,47 +11,57 @@ DIR="$(dirname "$SCRIPT_DIR")"  # 项目根目录
 
 echo "项目目录: $DIR"
 
-# 检查是否在git仓库中，如果是则自动拉取最新代码
+# 检查是否在git仓库中
 if [ -d "$DIR/.git" ]; then
-    echo "📥 检测到Git仓库，拉取最新代码..."
-    cd "$DIR" || {
-        echo "❌ 无法进入项目目录: $DIR"
-        exit 1
-    }
+    echo "📥 检测到Git仓库"
     
-    # 保存当前更改（如果有）
-    if ! git diff-index --quiet HEAD -- 2>/dev/null; then
-        echo "⚠️  检测到本地更改，自动保存..."
-        git stash push -m "Auto stash before docker deployment $(date)"
-    fi
+    # 询问是否更新代码
+    echo "是否拉取最新代码？(y/N，5秒后自动跳过)"
+    read -r -t 5 update_code || update_code="n"
     
-    # 拉取最新代码
-    if git pull --rebase >/dev/null 2>&1; then
-        echo "✅ 代码更新成功"
-    else
-        echo "⚠️  代码拉取失败，使用当前版本继续部署"
-    fi
-    
-    # 如果有stash，询问是否恢复
-    if git stash list | grep -q "Auto stash before docker deployment"; then
-        echo "💾 发现保存的本地更改，是否恢复？(y/N)"
-        read -r -t 10 restore_stash || restore_stash="n"
-        case "$restore_stash" in
-            [yY]|[yY][eE][sS])
-                git stash pop
-                echo "✅ 本地更改已恢复"
-                ;;
-            *)
-                echo "ℹ️  本地更改已保存，可使用 'git stash pop' 手动恢复"
-                ;;
-        esac
-    fi
-else
-    cd "$DIR" || {
-        echo "❌ 无法进入项目目录: $DIR"
-        exit 1
-    }
+    case "$update_code" in
+        [yY]|[yY][eE][sS])
+            echo "正在拉取最新代码..."
+            cd "$DIR" || {
+                echo "❌ 无法进入项目目录: $DIR"
+                exit 1
+            }
+            
+            # 保存当前更改（如果有）
+            if ! git diff-index --quiet HEAD -- 2>/dev/null; then
+                echo "⚠️  检测到本地更改，自动保存..."
+                git stash push -m "Auto stash before docker deployment $(date)"
+            fi
+            
+            # 拉取最新代码
+            if git pull --rebase; then
+                echo "✅ 代码更新成功"
+            else
+                echo "❌ 代码拉取失败"
+                echo "请手动更新代码或检查网络连接"
+                echo "继续使用当前版本部署？(y/N)"
+                read -r continue_deploy
+                case "$continue_deploy" in
+                    [yY]|[yY][eE][sS])
+                        echo "继续使用当前版本..."
+                        ;;
+                    *)
+                        echo "部署已取消"
+                        exit 1
+                        ;;
+                esac
+            fi
+            ;;
+        *)
+            echo "⏭️  跳过代码更新，使用当前版本"
+            ;;
+    esac
 fi
+
+cd "$DIR" || {
+    echo "❌ 无法进入项目目录: $DIR"
+    exit 1
+}
 
 # 检查Docker是否可用
 if ! command -v docker >/dev/null 2>&1; then

@@ -161,10 +161,12 @@ ssh admin@your-nas-ip
 git clone https://github.com/cls3389/koukuanshibai-web.git
 cd koukuanshibai-web
 
-# 一键Docker部署（自动拉取最新代码）
+# Docker部署（可选择是否更新代码）
 ./dsm/docker-start.sh
+# 脚本会询问是否拉取最新代码，5秒后自动跳过
 
-# 后续更新部署：直接运行（会自动git pull）
+# 手动更新代码后部署
+git pull
 ./dsm/docker-start.sh
 
 # 查看Docker状态  
