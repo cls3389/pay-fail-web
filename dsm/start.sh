@@ -98,7 +98,7 @@ nohup $GUNICORN \
     --daemon \
     --pid "$PIDFILE" \
     --pythonpath "$DIR" \
-    excel_web:app
+    pay-fail-web:app
 
 # 检查启动是否成功
 sleep 3

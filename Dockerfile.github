@@ -39,4 +39,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:4009/health || exit 1
 
 # 启动命令 - 轻量级多进程运行
-CMD ["python", "-m", "gunicorn", "--bind", "0.0.0.0:4009", "--workers", "2", "--threads", "2", "--timeout", "60", "--max-requests", "1000", "--max-requests-jitter", "100", "--preload", "excel_web:app"]
+CMD ["python", "-m", "gunicorn", "--bind", "0.0.0.0:4009", "--workers", "2", "--threads", "2", "--timeout", "60", "--max-requests", "1000", "--max-requests-jitter", "100", "--preload", "pay-fail-web:app"]

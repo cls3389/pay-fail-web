@@ -66,7 +66,7 @@ pip install -r requirements.txt
 mkdir -p uploads output logs
 
 # 启动应用
-python excel_web.py
+python pay-fail-web.py
 ```
 
 ## 📋 使用说明
@@ -104,7 +104,7 @@ python excel_web.py
 git clone https://github.com/cls3389/pay-fail-web.git
 cd pay-fail-web
 pip install -r requirements.txt
-python excel_web.py
+python pay-fail-web.py
 ```
 
 ### 生产部署
@@ -120,7 +120,7 @@ docker run -d -p 4009:4009 ghcr.io/cls3389/pay-fail-web:latest
 
 ```
 pay-fail-web/
-├── excel_web.py          # Flask应用主文件
+├── pay-fail-web.py       # Flask应用主文件
 ├── excel_processor.py    # Excel处理核心逻辑
 ├── file_cleaner.py       # 自动文件清理
 ├── config.py             # 应用配置
