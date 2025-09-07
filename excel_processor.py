@@ -549,7 +549,7 @@ class ExcelProcessorService:
         print("     正在应用基础样式...")
         
         # 定义样式
-        标题字体 = Font(name='微软雅黑', size=10, bold=True, color='000000')
+        标题字体 = Font(name='微软雅黑', size=12, bold=True, color='000000')
         内容字体 = Font(name='微软雅黑', size=10, color='000000')
         直营中心标题字体 = Font(name='微软雅黑', size=12, bold=True, color='000000')
         

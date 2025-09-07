@@ -21,6 +21,25 @@
 
 **超轻量级镜像** - 仅150MB，内存占用80MB
 
+#### 方法1：Docker Compose（推荐）
+
+```bash
+# 克隆仓库
+git clone https://github.com/cls3389/pay-fail-web.git
+cd pay-fail-web
+
+# 启动服务
+docker-compose up -d
+
+# 查看状态
+docker-compose ps
+
+# 停止服务
+docker-compose down
+```
+
+#### 方法2：直接运行Docker
+
 ```bash
 # 拉取镜像
 docker pull ghcr.io/cls3389/pay-fail-web:latest

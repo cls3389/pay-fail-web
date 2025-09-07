@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  pay-fail-web:
+    image: ghcr.io/cls3389/pay-fail-web:latest
+    container_name: pay-fail-web
+    ports:
+      - "4009:4009"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./output:/app/output
+      - ./logs:/app/logs
+    environment:
+      - FLASK_ENV=production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4009/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
