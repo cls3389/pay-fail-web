@@ -2,9 +2,8 @@ name: CI/CD Pipeline
 
 "on":
   push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+    tags: [ 'v*' ]  # 只在发布版本标签时构建
+  workflow_dispatch:  # 允许手动触发
 
 # 移除代理配置，GitHub Actions不需要代理
 
@@ -181,7 +180,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: [test, build-docker]
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    if: startsWith(github.ref, 'refs/tags/v')  # 只在发布版本标签时部署
     permissions:
       contents: read
       packages: read
@@ -194,8 +193,7 @@ jobs:
       run: |
         echo "🚀 Docker镜像已成功构建并推送到GitHub Container Registry"
         echo "📦 镜像地址: ghcr.io/${{ github.repository }}:latest"
-        echo "📦 所有标签:"
-        echo "${{ steps.meta.outputs.tags }}"
+        echo "📦 版本标签: ${{ github.ref_name }}"
         echo ""
         echo "🔧 使用方法:"
         echo "docker pull ghcr.io/${{ github.repository }}:latest"
