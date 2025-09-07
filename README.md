@@ -1,7 +1,7 @@
-# 扣款失败信息处理工具 - Web版本
+# Pay Fail Web - 扣款失败信息处理工具
 
-[![Version](https://img.shields.io/badge/version-v1.0.0-blue.svg)](https://github.com/cls3389/koukuanshibai-web/releases)
-[![Docker](https://img.shields.io/badge/docker-ghcr.io%2Fcls3389%2Fkoukuanshibai--web-blue.svg)](https://github.com/cls3389/koukuanshibai-web/pkgs/container/koukuanshibai-web)
+[![Version](https://img.shields.io/badge/version-v1.0.1-blue.svg)](https://github.com/cls3389/pay-fail-web/releases)
+[![Docker](https://img.shields.io/badge/docker-ghcr.io%2Fcls3389%2Fpay--fail--web-blue.svg)](https://github.com/cls3389/pay-fail-web/pkgs/container/pay-fail-web)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 基于Flask的Web应用，支持在线处理Excel文件，自动分析扣款失败信息。
@@ -23,16 +23,16 @@
 
 ```bash
 # 拉取镜像
-docker pull ghcr.io/cls3389/koukuanshibai-web:latest
+docker pull ghcr.io/cls3389/pay-fail-web:latest
 
 # 运行容器
 docker run -d \
-  --name excel-processor \
+  --name pay-fail-web \
   -p 4009:4009 \
   -v ./uploads:/app/uploads \
   -v ./output:/app/output \
   -v ./logs:/app/logs \
-  ghcr.io/cls3389/koukuanshibai-web:latest
+  ghcr.io/cls3389/pay-fail-web:latest
 ```
 
 访问：http://localhost:4009
@@ -82,8 +82,8 @@ python excel_web.py
 
 ### 本地开发
 ```bash
-git clone https://github.com/cls3389/koukuanshibai-web.git
-cd koukuanshibai-web
+git clone https://github.com/cls3389/pay-fail-web.git
+cd pay-fail-web
 pip install -r requirements.txt
 python excel_web.py
 ```
@@ -94,13 +94,13 @@ python excel_web.py
 docker-compose up -d
 
 # 或直接运行
-docker run -d -p 4009:4009 ghcr.io/cls3389/koukuanshibai-web:latest
+docker run -d -p 4009:4009 ghcr.io/cls3389/pay-fail-web:latest
 ```
 
 ## 📁 项目结构
 
 ```
-koukuanshibai-web/
+pay-fail-web/
 ├── excel_web.py          # Flask应用主文件
 ├── excel_processor.py    # Excel处理核心逻辑
 ├── file_cleaner.py       # 自动文件清理
@@ -119,7 +119,7 @@ koukuanshibai-web/
 **Q: 端口4009被占用？**
 ```bash
 # 使用其他端口
-docker run -d -p 4010:4009 ghcr.io/cls3389/koukuanshibai-web:latest
+docker run -d -p 4010:4009 ghcr.io/cls3389/pay-fail-web:latest
 ```
 
 **Q: 文件上传失败？**
@@ -133,12 +133,12 @@ docker run -d -p 4010:4009 ghcr.io/cls3389/koukuanshibai-web:latest
 docker logs excel-processor
 
 # 检查镜像
-docker images | grep koukuanshibai-web
+docker images | grep pay-fail-web
 ```
 
 ## 📞 技术支持
 
-- **GitHub Issues**: [提交问题](https://github.com/cls3389/koukuanshibai-web/issues)
+- **GitHub Issues**: [提交问题](https://github.com/cls3389/pay-fail-web/issues)
 - **健康检查**: http://localhost:4009/health
 - **API文档**: http://localhost:4009/api/stats
 
@@ -161,7 +161,7 @@ docker images | grep koukuanshibai-web
 - 内存占用仅80MB
 
 **部署方式**
-- Docker镜像：`ghcr.io/cls3389/koukuanshibai-web:latest`
+- Docker镜像：`ghcr.io/cls3389/pay-fail-web:latest`
 - 端口：4009
 - 健康检查：`/health`
 

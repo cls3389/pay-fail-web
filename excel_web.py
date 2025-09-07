@@ -194,8 +194,8 @@ def health_check():
         status = {
             'status': 'healthy',
             'timestamp': datetime.now().isoformat(),
-            'service': 'excel-processor-web',
-            'version': '1.0.0'
+            'service': 'pay-fail-web',
+            'version': '1.0.1'
         }
         
         return jsonify(status)

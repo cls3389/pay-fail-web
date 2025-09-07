@@ -552,6 +552,9 @@ class ExcelProcessorService:
         标题字体 = Font(name='微软雅黑', size=10, bold=True, color='000000')
         内容字体 = Font(name='微软雅黑', size=10, color='000000')
         直营中心标题字体 = Font(name='微软雅黑', size=12, bold=True, color='000000')
+        
+        # 设置工作表默认字体
+        ws.sheet_properties.tabColor = None
         居中对齐 = Alignment(horizontal='center', vertical='center')
         边框样式 = Border(
             left=Side(style='thin'), right=Side(style='thin'),
@@ -703,8 +706,8 @@ class ExcelProcessorService:
                 # 跳过标题行和表头行
                 是否标题行 = (col == 1 and cell_value and ws.cell(row=row, column=2).value is None and 
                           (列数 < 3 or ws.cell(row=row, column=3).value is None))
-                # 表头行判断：只在第一列且包含表头关键词时才算表头行
-                是否表头行 = (col == 1 and cell_value and any(keyword in str(cell_value) for keyword in 
+                # 表头行判断：只在第一列且完全匹配表头关键词时才算表头行
+                是否表头行 = (col == 1 and cell_value and any(keyword == str(cell_value).strip() for keyword in 
                           ['所属团队', '所属业务经理', '客户姓名', '应还款金额']))
                 
                 if 是否标题行 or 是否表头行:
