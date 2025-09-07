@@ -549,9 +549,9 @@ class ExcelProcessorService:
         print("     正在应用基础样式...")
         
         # 定义样式
-        标题字体 = Font(name='微软雅黑', size=11, bold=True, color='000000')
+        标题字体 = Font(name='微软雅黑', size=12, bold=True, color='000000')
         内容字体 = Font(name='微软雅黑', size=10, color='000000')
-        直营中心标题字体 = Font(name='微软雅黑', size=14, bold=True, color='000000')
+        直营中心标题字体 = Font(name='微软雅黑', size=12, bold=True, color='000000')
         居中对齐 = Alignment(horizontal='center', vertical='center')
         边框样式 = Border(
             left=Side(style='thin'), right=Side(style='thin'),
@@ -560,26 +560,70 @@ class ExcelProcessorService:
         
         # 应用样式到所有单元格
         for row in range(1, ws.max_row + 1):
+            # 先确定行的类型和高度
+            row_type = None
+            row_height = None
+            
+            # 检查是否为直营中心标题行（只检查第一列）
+            is_center_title = False
+            first_cell = ws.cell(row=row, column=1)
+            if first_cell.value:
+                # 检查是否在合并单元格中
+                for merged_range in ws.merged_cells.ranges:
+                    if first_cell.coordinate in merged_range:
+                        is_center_title = True
+                        break
+            
+            if is_center_title:
+                row_type = 'center_title'
+                row_height = 25
+            else:
+                # 检查是否为表头行
+                is_header = False
+                # 表头行的特征：整行都是表头列名
+                header_keywords = ['所属团队', '所属业务经理', '客户姓名', '应还款金额']
+                header_count = 0
+                for col in range(1, num_columns + 1):
+                    cell = ws.cell(row=row, column=col)
+                    if cell.value and any(keyword == str(cell.value).strip() for keyword in header_keywords):
+                        header_count += 1
+                
+                # 如果大部分列都是表头关键词，则认为是表头行
+                if header_count >= num_columns * 0.7:  # 70%以上的列都是表头关键词
+                    is_header = True
+                
+                if is_header:
+                    row_type = 'header'
+                    row_height = 22
+                else:
+                    # 检查是否为空行
+                    is_empty = True
+                    for col in range(1, num_columns + 1):
+                        cell = ws.cell(row=row, column=col)
+                        if cell.value is not None and str(cell.value).strip() != '':
+                            is_empty = False
+                            break
+                    
+                    if is_empty and not (first_cell.value is None and ws.cell(row=row, column=2).value is None and ws.cell(row=row, column=3).value is None):
+                        row_type = 'empty'
+                        row_height = 15
+                    else:
+                        row_type = 'data'
+                        row_height = 20
+            
+            # 设置行高（只设置一次）
+            ws.row_dimensions[row].height = row_height
+            print(f"      DEBUG: 行 {row} 类型: {row_type}, 高度: {row_height}px")
+            
+            # 为每个单元格应用样式
             for col in range(1, num_columns + 1):
                 cell = ws.cell(row=row, column=col)
                 
-                # 检查是否为直营中心标题行（直接检查合并单元格）
-                is_center_title = False
-                if col == 1 and cell.value:
-                    # 检查是否在合并单元格中
-                    for merged_range in ws.merged_cells.ranges:
-                        if cell.coordinate in merged_range:
-                            is_center_title = True
-                            break
-                
-                if is_center_title:
+                if row_type == 'center_title':
                     # 直营中心标题样式
-                    print(f"      DEBUG: 检测到直营中心标题行 {row}: {cell.value}")
                     cell.font = 直营中心标题字体
                     cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
                     cell.fill = PatternFill(start_color='E6F3FF', end_color='E6F3FF', fill_type='solid')
-                    ws.row_dimensions[row].height = 25  # 浅蓝色背景，高度25
-                    print(f"      DEBUG: 设置行高为25px")
                     
                     # 为整个合并单元格区域添加边框
                     for merged_range in ws.merged_cells.ranges:
@@ -595,24 +639,17 @@ class ExcelProcessorService:
                                 for c in range(start_col, end_col + 1):
                                     border_cell = ws.cell(row=r, column=c)
                                     border_cell.border = 边框样式
-                            print(f"      DEBUG: 为合并单元格区域添加边框: {merged_range}")
                             break
-                elif any(keyword in str(cell.value or '') for keyword in ['所属团队', '所属业务经理', '客户姓名', '应还款金额']):
+                elif row_type == 'header':
                     # 表头样式
                     cell.font = 标题字体
                     cell.alignment = 居中对齐
                     cell.border = 边框样式
-                    ws.row_dimensions[row].height = 22
-                elif (cell.value is None or str(cell.value).strip() == '') and not (col == 1 and ws.cell(row=row, column=2).value is None and ws.cell(row=row, column=3).value is None):
-                    # 空行（排除直营中心标题行）
-                    print(f"      DEBUG: 检测到空行 {row}")
-                    ws.row_dimensions[row].height = 15
-                else:
+                elif row_type == 'data':
                     # 数据行样式
                     cell.font = 内容字体
                     cell.alignment = 居中对齐
                     cell.border = 边框样式
-                    ws.row_dimensions[row].height = 20
                 
                 # 金额格式化
                 if col == num_columns:  # 假设最后一列是金额列
@@ -663,10 +700,11 @@ class ExcelProcessorService:
                 cell = ws.cell(row=row, column=col)
                 cell_value = cell.value
                 
-                # 跳过标题行
+                # 跳过标题行和表头行
                 是否标题行 = (col == 1 and cell_value and ws.cell(row=row, column=2).value is None and 
                           (列数 < 3 or ws.cell(row=row, column=3).value is None))
-                是否表头行 = (cell_value and any(keyword in str(cell_value) for keyword in 
+                # 表头行判断：只在第一列且包含表头关键词时才算表头行
+                是否表头行 = (col == 1 and cell_value and any(keyword in str(cell_value) for keyword in 
                           ['所属团队', '所属业务经理', '客户姓名', '应还款金额']))
                 
                 if 是否标题行 or 是否表头行:
