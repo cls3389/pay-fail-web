@@ -38,13 +38,13 @@ jobs:
       run: |
         # 运行基本的应用导入测试
         echo "Testing module imports..."
-        python -c "import excel_web; print('✅ excel_web module imported successfully')" || echo "⚠️ excel_web import failed"
+        python -c "import pay-fail-web; print('✅ pay-fail-web module imported successfully')" || echo "⚠️ pay-fail-web import failed"
         python -c "import excel_processor; print('✅ excel_processor module imported successfully')" || echo "⚠️ excel_processor import failed"
         python -c "import file_cleaner; print('✅ file_cleaner module imported successfully')" || echo "⚠️ file_cleaner import failed"
         
         # 测试Flask应用创建
         echo "Testing Flask app creation..."
-        python -c "from excel_web import create_app; app = create_app(); print('✅ Flask app created successfully')" || echo "⚠️ Flask app creation failed"
+        python -c "from pay-fail-web import create_app; app = create_app(); print('✅ Flask app created successfully')" || echo "⚠️ Flask app creation failed"
         
         # 测试配置加载
         echo "Testing configuration..."
