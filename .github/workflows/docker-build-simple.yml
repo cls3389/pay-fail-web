@@ -1,11 +1,10 @@
-name: Docker Build and Push
+name: Docker Build and Push (Simple)
 
-# 👇 关键：workflow 级权限，确保 OIDC 和 attestation 正常工作
+# 简化版本，不包含 attestation
 permissions:
   contents: read
   packages: write
   id-token: write
-  attestations: write
 
 on:
   push:
@@ -61,11 +60,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           build-args: BUILDKIT_INLINE_CACHE=1
 
-      - name: Generate artifact attestation
-        if: github.event_name != 'pull_request' && github.ref_type == 'tag'
-        uses: actions/attest-build-provenance@v1
-        continue-on-error: true
-        with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          subject-digest: ${{ steps.build-push.outputs.digest }}
-          push-to-registry: true
+      - name: Build summary
+        run: |
+          echo "✅ Docker image built and pushed successfully"
+          echo "📦 Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+          echo "🏷️ Tags: ${{ steps.meta.outputs.tags }}"
